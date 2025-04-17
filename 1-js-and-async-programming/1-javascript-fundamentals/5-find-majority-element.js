@@ -19,6 +19,31 @@ findMajorityElement([1, 2, 3, 4, 5]); // Expected output: null
 
 */
 
-const findMajorityElement = (arr) => {};
+const findMajorityElement = (arr) => {
+  let majorElement = null;
+  let count = 0;
+
+  for (let num of arr) {
+    if (count === 0) {
+      majorElement = num;
+    }
+
+    if (num === majorElement) {
+      count += 1;
+    } else {
+      count -= 1;
+    }
+  }
+
+  let occurrence = 0;
+
+  for (let num of arr) {
+    if (num === majorElement) {
+      occurrence++;
+    }
+  }
+
+  return occurrence > Math.floor(arr.length / 2) ? majorElement : null;
+};
 
 module.exports = findMajorityElement;
