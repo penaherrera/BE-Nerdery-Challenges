@@ -11,6 +11,11 @@
   - Only print the user information in the output—no extra text or formatting
 
  */
+import {
+  getUsers,
+  getLikedMovies,
+  getDislikedMovies,
+} from "./utils/mocked-api.js";
 
 /**
  * @typedef {Object} User
@@ -25,14 +30,25 @@
  * @returns {Promise<User[]>} A promise that resolves to an array of users who dislike more movies than they like.
  */
 const getUsersWithMoreDislikedMoviesThanLikedMovies = () => {
-  // Add your code here
+  return Promise.all([getUsers(), getLikedMovies(), getDislikedMovies()]).then(
+    ([users, likes, dislikes]) => {
+      const result = users.filter((user) => {
+        const liked =
+          likes.find((entry) => entry.userId === user.id)?.movies.length || 0;
+        const disliked =
+          dislikes.find((entry) => entry.userId === user.id)?.movies.length ||
+          0;
+        return disliked > liked;
+      });
 
-  return [];
+      return [...result];
+    },
+  );
 };
 
 getUsersWithMoreDislikedMoviesThanLikedMovies().then((users) => {
   console.log("Users with more disliked movies than liked movies:");
   users.forEach((user) => {
-    console.log(user, age);
+    console.log(user);
   });
 });
