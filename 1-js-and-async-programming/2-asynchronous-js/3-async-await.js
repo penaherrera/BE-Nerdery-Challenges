@@ -11,6 +11,14 @@
     - Make sure to return a string containing the name of the most common subscription
 */
 
+import {
+  getUsers,
+  getLikedMovies,
+  getDislikedMovies,
+  getUserSubscriptionByUserId,
+} from "./utils/mocked-api.js";
+import findMajorityElement from "../1-javascript-fundamentals/5-find-majority-element.js";
+
 /**
  * Logs the most common subscription among users
  * who disliked more movies than they liked.
@@ -18,7 +26,25 @@
  * @returns {Promise<string>} Logs the subscription name as a string.
  */
 const getCommonDislikedSubscription = async () => {
-  // Add your code here
+  const users = await getUsers();
+  const likes = await getLikedMovies();
+  const dislikes = await getDislikedMovies();
+  const subscriptionsByDislikedUser = [];
+
+  const dislikedUsers = users.filter((user) => {
+    const liked =
+      likes.find((entry) => entry.userId === user.id)?.movies.length || 0;
+    const disliked =
+      dislikes.find((entry) => entry.userId === user.id)?.movies.length || 0;
+    return disliked > liked;
+  });
+
+  for (const user of dislikedUsers) {
+    const userSubscription = await getUserSubscriptionByUserId(user.id);
+    subscriptionsByDislikedUser.push(userSubscription.subscription);
+  }
+
+  return findMajorityElement(subscriptionsByDislikedUser);
 };
 
 getCommonDislikedSubscription().then((subscription) => {
