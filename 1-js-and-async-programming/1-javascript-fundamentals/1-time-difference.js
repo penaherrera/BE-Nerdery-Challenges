@@ -22,19 +22,7 @@ const timeDifference = (a, b) => {
   calculateMinutes = Math.floor((diff % 3600) / 60).toString();
   calculateSeconds = Math.floor(diff % 60).toString();
 
-  if (Number(calculateHours) < 10) {
-    calculateHours = `0${calculateHours}`;
-  }
-
-  if (Number(calculateMinutes) < 10) {
-    calculateMinutes = `0${calculateMinutes}`;
-  }
-
-  if (Number(calculateSeconds) < 10) {
-    calculateSeconds = `0${calculateSeconds}`;
-  }
-
-  return `${calculateHours.toString()}:${calculateMinutes.toString()}:${calculateSeconds.toString()}`;
+  return `${calculateHours.padStart(2, "0")}:${calculateMinutes.padStart(2, "0")}:${calculateSeconds.padStart(2, "0")}`;
 };
 
 module.exports = timeDifference;
