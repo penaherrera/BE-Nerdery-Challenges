@@ -41,7 +41,8 @@ const factorialChain = (number, lastDigits) => {
   }
 
   const sumStr = sumNumber.toString();
-  return sumStr.slice(-lastDigits).padStart(lastDigits, "0");
+  const result = sumStr.slice(-lastDigits).padStart(lastDigits, "0");
+  return result;
 };
 
 module.exports = factorialChain;
