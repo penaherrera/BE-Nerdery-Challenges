@@ -20,30 +20,17 @@ findMajorityElement([1, 2, 3, 4, 5]); // Expected output: null
 */
 
 const findMajorityElement = (arr) => {
-  let majorElement = null;
-  let count = 0;
+  const countMap = new Map();
 
-  for (let num of arr) {
-    if (count === 0) {
-      majorElement = num;
-    }
+  for (const num of arr) {
+    const currentCount = (countMap.get(num) || 0) + 1;
+    countMap.set(num, currentCount);
 
-    if (num === majorElement) {
-      count += 1;
-    } else {
-      count -= 1;
+    if (currentCount > Math.floor(arr.length / 2)) {
+      return num;
     }
   }
 
-  let occurrence = 0;
-
-  for (let num of arr) {
-    if (num === majorElement) {
-      occurrence++;
-    }
-  }
-
-  return occurrence > Math.floor(arr.length / 2) ? majorElement : null;
+  return null;
 };
-
 module.exports = findMajorityElement;
