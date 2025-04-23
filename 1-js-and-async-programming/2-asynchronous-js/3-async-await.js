@@ -29,20 +29,28 @@ const getCommonDislikedSubscription = async () => {
   const users = await getUsers();
   const likes = await getLikedMovies();
   const dislikes = await getDislikedMovies();
-  const subscriptionsByDislikedUser = [];
+
+  const likesMap = new Map(
+    likes.map((entry) => [entry.userId, entry.movies.length]),
+  );
+  const dislikesMap = new Map(
+    dislikes.map((entry) => [entry.userId, entry.movies.length]),
+  );
 
   const dislikedUsers = users.filter((user) => {
-    const liked =
-      likes.find((entry) => entry.userId === user.id)?.movies.length || 0;
-    const disliked =
-      dislikes.find((entry) => entry.userId === user.id)?.movies.length || 0;
+    const liked = likesMap.get(user.id) || 0;
+    const disliked = dislikesMap.get(user.id) || 0;
     return disliked > liked;
   });
 
-  for (const user of dislikedUsers) {
-    const userSubscription = await getUserSubscriptionByUserId(user.id);
-    subscriptionsByDislikedUser.push(userSubscription.subscription);
-  }
+  const subscriptionsPromises = dislikedUsers.map((user) =>
+    getUserSubscriptionByUserId(user.id),
+  );
+  const subscriptions = await Promise.all(subscriptionsPromises);
+
+  const subscriptionsByDislikedUser = subscriptions.map(
+    (sub) => sub.subscription,
+  );
 
   return findMajorityElement(subscriptionsByDislikedUser);
 };

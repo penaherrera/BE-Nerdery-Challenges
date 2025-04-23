@@ -32,16 +32,20 @@ import {
 const getUsersWithMoreDislikedMoviesThanLikedMovies = () => {
   return Promise.all([getUsers(), getLikedMovies(), getDislikedMovies()]).then(
     ([users, likes, dislikes]) => {
+      const likesMap = new Map(
+        likes.map((entry) => [entry.userId, entry.movies.length]),
+      );
+      const dislikesMap = new Map(
+        dislikes.map((entry) => [entry.userId, entry.movies.length]),
+      );
+
       const result = users.filter((user) => {
-        const liked =
-          likes.find((entry) => entry.userId === user.id)?.movies.length || 0;
-        const disliked =
-          dislikes.find((entry) => entry.userId === user.id)?.movies.length ||
-          0;
+        const liked = likesMap.get(user.id) || 0;
+        const disliked = dislikesMap.get(user.id) || 0;
         return disliked > liked;
       });
 
-      return [...result];
+      return result;
     },
   );
 };
