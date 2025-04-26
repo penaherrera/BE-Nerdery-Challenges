@@ -11,10 +11,43 @@
  * - Add the name of the products in an array called productsNames inside the department object.
  */
 
+//[{"name": "department-1", productsCount: 3, products: [...allProducts]}
+
+import { Product, Department, DepartmentProducts } from "./1-types";
+import {
+  departmentJsonPath,
+  productJsonPath,
+  readJsonFile,
+} from "./utils/read-json.util";
+
 async function getDepartmentsWithProductCount(
-  departments: unknown[],
-  products: unknown[],
-): Promise<unknown[]> {
-  // Implement the function logic here
-  return [];
+  departments: Department[],
+  products: Product[],
+): Promise<DepartmentProducts[]> {
+  const departmentProducts = departments.map((department) => {
+    const productsInDepartment = products.filter(
+      (product) => department.id === product.departmentId,
+    );
+
+    const departmentProduct = {
+      name: department.name,
+      productsCount: productsInDepartment.length,
+      products: productsInDepartment,
+    };
+
+    return departmentProduct;
+  });
+  return departmentProducts;
 }
+
+Promise.all([
+  readJsonFile<Product>(productJsonPath),
+  readJsonFile<Department>(departmentJsonPath),
+])
+  .then(([products, brands]) => {
+    const result = getDepartmentsWithProductCount(brands, products);
+    return result;
+  })
+  .then((result) => {
+    console.dir(result, { depth: null, colors: true });
+  });
