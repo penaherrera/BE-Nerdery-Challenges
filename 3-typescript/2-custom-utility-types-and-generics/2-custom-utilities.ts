@@ -21,8 +21,30 @@
  */
 
 // Add here your solution
+type OmitByType<T, U> = {
+  [K in keyof T as T[K] extends U ? never : K]: T[K];
+};
 
 // Add here your example
+
+type Product = {
+  id: number;
+  name: string;
+  isActive: boolean;
+  price: number;
+};
+
+type ProductWithouNumber = OmitByType<Product, number>;
+
+//Demonstration with a constant
+//Uncomment to see error
+
+// const product: ProductWithouNumber = {
+//   id: 1, //error here
+//   name: "Glass",
+//   isActive: true,
+//   price: 12, //error here
+// };
 
 /**
  * Exercise #2: Implement the utility type `If<C, T, F>`, which evaluates a condition `C`
@@ -40,6 +62,14 @@
  */
 
 // Add here your solution
+
+type If<C extends boolean, T, F> = C extends true ? T : F;
+
+type isNumber = If<true, number, string>;
+
+//Demonstration with a constant
+//Uncomment to see error
+// const numberTwo: isNumber = "this is a string";
 
 // Add here your example
 
