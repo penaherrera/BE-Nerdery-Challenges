@@ -19,7 +19,68 @@
  *
  **/
 
-async function analyzeProductPrices(products: any[]): Promise<any> {}
+import {
+  Brand,
+  BrandInfo,
+  EnrichedProduct,
+  Product,
+  Summary,
+  Image,
+} from "./1-types";
+import { calculateAverageDiscount } from "./utils/average-discount.util";
+import {
+  brandJsonPath,
+  productJsonPath,
+  readJsonFile,
+} from "./utils/read-json.util";
+
+async function analyzeProductPrices(products: Product[]): Promise<Summary> {
+  const prices = products.map((product) => product.price);
+
+  const totalPrice: number = prices.reduce((sum, price) => sum + price, 0);
+
+  const averagePrice: number = parseFloat(
+    (totalPrice / prices.length).toFixed(2),
+  );
+
+  const maxPrice = Math.max(...prices);
+
+  const minPrice = Math.min(...prices);
+
+  const expensiveProduct: Product = products.find(
+    (product) => product.price === maxPrice,
+  ) as Product;
+
+  const cheapestProduct = products.find(
+    (product) => product.price === minPrice,
+  ) as Product;
+
+  const onSaleProducts = products.filter((product) => product.onSale == true);
+
+  const averageDiscount = await calculateAverageDiscount(onSaleProducts);
+
+  const summary: Summary = {
+    totalCost: totalPrice,
+    averagePrice: averagePrice,
+    onSaleCount: onSaleProducts.length,
+    averageDiscount: averageDiscount,
+    mostExpensiveProduct: expensiveProduct,
+    cheapestProduct: cheapestProduct,
+  };
+
+  return summary;
+}
+
+//Execute ***analyzeProductPrices*** function by uncomment this block
+
+// readJsonFile<Product>(productJsonPath)
+//   .then((products) => {
+//     const result = analyzeProductPrices(products);
+//     return result;
+//   })
+//   .then((result) => {
+//     console.dir(result, { depth: null, colors: true });
+//   });
 
 /**
  *  Challenge 2: Build a Product Catalog with Brand Metadata
@@ -36,11 +97,54 @@ async function analyzeProductPrices(products: any[]): Promise<any> {}
  */
 
 async function buildProductCatalog(
-  products: unknown[],
-  brands: unknown[],
-): Promise<unknown[]> {
-  return [];
+  products: Product[],
+  brands: Brand[],
+): Promise<EnrichedProduct[]> {
+  const activeProducts = products.filter((product) => product.isActive);
+  const activeBrands = brands.filter((brand) => brand.isActive);
+
+  const productsWithValidBrands = activeProducts.filter((product) =>
+    activeBrands.some((brand) => brand.id === product.brandId),
+  );
+
+  const enrichedCatalog: EnrichedProduct[] = productsWithValidBrands.map(
+    (product) => {
+      const brand = activeBrands.find((brand) => brand.id === product.brandId)!;
+
+      const brandInfo: BrandInfo = {
+        name: brand.name,
+        description: brand.description,
+        logo: brand.logo,
+        foundedYear: brand.foundedYear,
+        website: brand.website,
+        headquarters: brand.headquarters,
+        signature: brand.signature,
+        socialMedia: brand.socialMedia,
+      };
+
+      return {
+        ...product,
+        brandInfo,
+      };
+    },
+  );
+
+  return enrichedCatalog;
 }
+
+//Execute ***buildProductCatalog*** function by uncomment this block
+
+// Promise.all([
+//   readJsonFile<Product>(productJsonPath),
+//   readJsonFile<Brand>(brandJsonPath),
+// ])
+//   .then(([products, brands]) => {
+//     const result = buildProductCatalog(products, brands);
+//     return result;
+//   })
+//   .then((result) => {
+//     console.dir(result, { depth: null, colors: true });
+//   });
 
 /**
  * Challenge 3: One image per product
@@ -57,9 +161,29 @@ async function buildProductCatalog(
  */
 
 async function filterProductsWithOneImage(
-  products: unknown[],
-): Promise<unknown[]> {
-  // Implement the function logic here
+  products: Product[],
+): Promise<Product[]> {
+  const productsWithImages = products.filter(
+    (product) => product.images && product.images.length > 0,
+  );
 
-  return [];
+  const productsWithOneImage: Product[] = productsWithImages.map((product) => {
+    return {
+      ...product,
+      images: [product.images[0]],
+    };
+  });
+
+  return productsWithOneImage;
 }
+
+//Execute ***filterProductsWithOneImage*** function by uncomment this block
+
+// readJsonFile<Product>(productJsonPath)
+//   .then((products) => {
+//     const result = filterProductsWithOneImage(products);
+//     return result;
+//   })
+//   .then((result) => {
+//     console.dir(result, { depth: null, colors: true });
+//   });
