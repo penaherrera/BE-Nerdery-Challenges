@@ -97,6 +97,21 @@ type isNumber = If<true, number, string>;
 
 // Add here your solution
 
+type MyReadonly<T> = {
+  readonly [K in keyof T]: T[K];
+};
+
+// interface User {
+//   name: string;
+//   age: number;
+// }
+
+// let user: MyReadonly<User> = {
+//   name: "Carlos",
+//   age: 24,
+// };
+
+// user.name = "Francisco";
 // Add here your example
 
 /**
@@ -118,6 +133,12 @@ type isNumber = If<true, number, string>;
  */
 
 // Add here your solution
+
+type MyReturnType<T extends (...args: any) => any> = T extends (
+  ...args: any
+) => infer R
+  ? R
+  : never;
 
 // Add here your example
 
