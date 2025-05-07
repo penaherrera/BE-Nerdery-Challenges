@@ -18,31 +18,20 @@
 
 //Base Type and Global Types
 
-export type Base = {
+export type BaseEntity = {
   id: number | string;
   name: string;
   departmentId: number;
-  description: Capitalize<string>;
+  description: string;
   isActive: boolean;
   keywords: string;
 };
 
-export type ImageDirectory = "products" | "categories" | "departments";
-
-export type ImageExtension = "jpg" | "png";
-
-export type ImagePath = `${ImageDirectory}/${string}.${ImageExtension}`;
-
-export type UpperCaseString = Uppercase<string>;
-
-export type UncapitalizedString = Uncapitalize<string>;
-
-export type CapitalizedString = Capitalize<string>;
 
 export type Image = {
   id: number;
-  url: ImagePath;
-  alt: `${string} - ${string}`;
+  url: string;
+  alt: string;
   isMain: boolean;
 };
 
@@ -55,20 +44,19 @@ export type Specifications = {
 
 export type Size = 1 | 2 | 3 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
 
-export type ISODateTime =
-  `${number}${number}${number}${number}-${number}${number}-${number}${number}T${number}${number}:${number}${number}:${number}${number}`;
 
-export type Product = Base & {
+
+export type Product = BaseEntity & {
   categoryId: number;
   brandId: number;
-  linkId: UncapitalizedString;
-  refId: UncapitalizedString;
+  linkId: string;
+  refId: string;
   isVisible: boolean;
-  descriptionShort: CapitalizedString;
-  releaseDate: ISODateTime;
+  descriptionShort: string;
+  releaseDate: string;
   title: string;
-  taxCode: UpperCaseString;
-  metaTagDescription: CapitalizedString;
+  taxCode: string;
+  metaTagDescription: string;
   supplierId: number;
   showWithoutStock: boolean;
   adWordsRemarketingCode?: string;
@@ -88,34 +76,33 @@ export type Product = Base & {
 //! Add necessary type definitions for the categories json file
 
 export type Filters = {
-  name: CapitalizedString;
-  values: CapitalizedString[];
+  name: string;
+  values: string[];
 };
 
-export type Category = Base & {
-  iconUrl: ImagePath;
-  bannerUrl: ImagePath;
+export type Category = BaseEntity & {
+  iconUrl: string;
+  bannerUrl: string;
   displayOrder: number;
-  metaDescription: CapitalizedString;
+  metaDescription: string;
   filters: Filters[];
 };
 
 // BRANDS JSON
 //! Add necessary type definitions for the brands json file
 
-export type AtSocialMedia = `@${string}`;
 
 export type SocialMedia = {
-  instagram: AtSocialMedia;
-  twitter: AtSocialMedia;
-  facebook: CapitalizedString;
+  instagram: string;
+  twitter: string;
+  facebook: string;
 };
 
-export type Brand = Pick<Base, "id" | "name" | "description" | "isActive"> & {
-  logo: `${string}.${ImageExtension}`;
+export type Brand = Pick<BaseEntity, "id" | "name" | "description" | "isActive"> & {
+  logo: string;
   foundedYear: number;
   website: string;
-  headquarters: `${CapitalizedString}, ${CapitalizedString}`;
+  headquarters: `${string}, ${string}`;
   signature: string;
   socialMedia: SocialMedia;
 };
@@ -124,16 +111,13 @@ export type Brand = Pick<Base, "id" | "name" | "description" | "isActive"> & {
 //! Add necessary type definitions for the departments json file
 
 export type Department = Pick<
-  Base,
-  "id" | "name" | "description" | "isActive"
-> &
-  Pick<
-    Category,
-    "displayOrder" | "bannerUrl" | "iconUrl" | "metaDescription"
-  > & {
-    featuredCategories: number[];
-    slug: UncapitalizedString;
-  };
+  Category,
+  "id" | "name" | "description" | "isActive" | 
+  "displayOrder" | "bannerUrl" | "iconUrl" | "metaDescription"
+> & {
+  featuredCategories: number[];
+  slug: string;
+};
 
 // Types and Interfaces used in excercises 2, 3 and 4
 export interface Summary {
@@ -152,7 +136,7 @@ export type EnrichedProduct = Product & {
 };
 
 export type BrandWithCountry = Brand & {
-  country: CapitalizedString;
+  country: string;
 };
 
 export type DepartmentProducts = Pick<Department, "name"> & {
@@ -161,11 +145,11 @@ export type DepartmentProducts = Pick<Department, "name"> & {
 };
 
 export interface Technology {
-  language?: CapitalizedString;
-  framework: CapitalizedString | null;
+  language?: string;
+  framework: string | null;
 }
 
-export interface Carlos extends Pick<Base, "name"> {
+export interface Carlos extends Pick<BaseEntity, "name"> {
   age: number;
   isBackendDev: boolean;
   techStack: Technology[];
