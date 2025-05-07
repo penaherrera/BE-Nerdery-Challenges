@@ -35,31 +35,38 @@ import {
 } from "./utils/read-json.util";
 
 async function analyzeProductPrices(products: Product[]): Promise<Summary> {
-  const prices = products.map((product) => product.price);
+  let totalPrice = 0;
+  let maxPrice = products[0].price;
+  let minPrice = products[0].price;
+  const onSaleProducts: Product[] = [];
+  const productsMap = new Map<number, Product>();
 
-  const totalPrice: number = prices.reduce((sum, price) => sum + price, 0);
+  products.forEach((product) => {
+    totalPrice += product.price;
 
-  const averagePrice: number = parseFloat(
-    (totalPrice / prices.length).toFixed(2),
-  );
+    if (product.price > maxPrice) {
+      maxPrice = product.price;
+    }
+    if (product.price < minPrice) {
+      minPrice = product.price;
+    }
 
-  const maxPrice = Math.max(...prices);
+    if (product.onSale === true) {
+      onSaleProducts.push(product);
+    }
 
-  const minPrice = Math.min(...prices);
+    productsMap.set(product.price, product);
+  });
 
-  const expensiveProduct: Product = products.find(
-    (product) => product.price === maxPrice,
-  ) as Product;
-
-  const cheapestProduct = products.find(
-    (product) => product.price === minPrice,
-  ) as Product;
-
-  const onSaleProducts = products.filter((product) => product.onSale == true);
-
+  const expensiveProduct = productsMap.get(maxPrice)!;
+  const cheapestProduct = productsMap.get(minPrice)!;
   const averageDiscount = await calculateAverageDiscount(onSaleProducts);
 
-  const summary: Summary = {
+  const averagePrice: number = parseFloat(
+    (totalPrice / products.length).toFixed(2),
+  );
+
+  return {
     totalCost: totalPrice,
     averagePrice: averagePrice,
     onSaleCount: onSaleProducts.length,
@@ -67,8 +74,6 @@ async function analyzeProductPrices(products: Product[]): Promise<Summary> {
     mostExpensiveProduct: expensiveProduct,
     cheapestProduct: cheapestProduct,
   };
-
-  return summary;
 }
 
 //Execute ***analyzeProductPrices*** function by uncomment this block
@@ -100,51 +105,55 @@ async function buildProductCatalog(
   products: Product[],
   brands: Brand[],
 ): Promise<EnrichedProduct[]> {
-  const activeProducts = products.filter((product) => product.isActive);
-  const activeBrands = brands.filter((brand) => brand.isActive);
+  const activeBrandsMap = new Map<string, Brand>();
 
-  const productsWithValidBrands = activeProducts.filter((product) =>
-    activeBrands.some((brand) => brand.id === product.brandId),
-  );
+  brands.forEach((brand) => {
+    if (brand.isActive) {
+      activeBrandsMap.set(String(brand.id), brand);
+    }
+  });
 
-  const enrichedCatalog: EnrichedProduct[] = productsWithValidBrands.map(
-    (product) => {
-      const brand = activeBrands.find((brand) => brand.id === product.brandId)!;
+  const enrichedCatalog: EnrichedProduct[] = [];
 
-      const brandInfo: BrandInfo = {
-        name: brand.name,
-        description: brand.description,
-        logo: brand.logo,
-        foundedYear: brand.foundedYear,
-        website: brand.website,
-        headquarters: brand.headquarters,
-        signature: brand.signature,
-        socialMedia: brand.socialMedia,
-      };
+  products.forEach((product) => {
+    if (!product.isActive) return;
 
-      return {
-        ...product,
-        brandInfo,
-      };
-    },
-  );
+    const brand = activeBrandsMap.get(String(product.brandId));
+
+    if (!brand) return;
+
+    const brandInfo: BrandInfo = {
+      name: brand.name,
+      description: brand.description,
+      logo: brand.logo,
+      foundedYear: brand.foundedYear,
+      website: brand.website,
+      headquarters: brand.headquarters,
+      signature: brand.signature,
+      socialMedia: brand.socialMedia,
+    };
+
+    enrichedCatalog.push({
+      ...product,
+      brandInfo,
+    });
+  });
 
   return enrichedCatalog;
 }
-
 //Execute ***buildProductCatalog*** function by uncomment this block
 
-// Promise.all([
-//   readJsonFile<Product>(productJsonPath),
-//   readJsonFile<Brand>(brandJsonPath),
-// ])
-//   .then(([products, brands]) => {
-//     const result = buildProductCatalog(products, brands);
-//     return result;
-//   })
-//   .then((result) => {
-//     console.dir(result, { depth: null, colors: true });
-//   });
+Promise.all([
+  readJsonFile<Product>(productJsonPath),
+  readJsonFile<Brand>(brandJsonPath),
+])
+  .then(([products, brands]) => {
+    const result = buildProductCatalog(products, brands);
+    return result;
+  })
+  .then((result) => {
+    console.dir(result, { depth: null, colors: true });
+  });
 
 /**
  * Challenge 3: One image per product
@@ -167,7 +176,7 @@ async function filterProductsWithOneImage(
     (product) => product.images && product.images.length > 0,
   );
 
-  const productsWithOneImage: Product[] = productsWithImages.map((product) => {
+  const productsWithOneImage = productsWithImages.map((product) => {
     return {
       ...product,
       images: [product.images[0]],
