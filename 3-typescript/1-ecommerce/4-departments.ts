@@ -11,10 +11,52 @@
  * - Add the name of the products in an array called productsNames inside the department object.
  */
 
+//[{"name": "department-1", productsCount: 3, products: [...allProducts]}
+
+import { Product, Department, DepartmentProducts } from "./1-types";
+import {
+  departmentJsonPath,
+  productJsonPath,
+  readJsonFile,
+} from "./utils/read-json.util";
+
 async function getDepartmentsWithProductCount(
-  departments: unknown[],
-  products: unknown[],
-): Promise<unknown[]> {
-  // Implement the function logic here
-  return [];
+  departments: Department[],
+  products: Product[],
+): Promise<DepartmentProducts[]> {
+  const productCountMap = new Map<string, number>();
+  const productsByDeptMap = new Map<string, Product[]>();
+
+  products.forEach((product) => {
+    const currentCount = productCountMap.get(String(product.departmentId)) || 0;
+    productCountMap.set(String(product.departmentId), currentCount + 1);
+
+    if (!productsByDeptMap.has(String(product.departmentId))) {
+      productsByDeptMap.set(String(product.departmentId), []);
+    }
+    productsByDeptMap.get(String(product.departmentId))?.push(product);
+  });
+
+  const result: DepartmentProducts[] = [];
+  departments.forEach((department) => {
+    result.push({
+      name: department.name,
+      productsCount: productCountMap.get(String(department.id)) || 0,
+      products: productsByDeptMap.get(String(department.id)) || [],
+    });
+  });
+
+  return result;
 }
+
+Promise.all([
+  readJsonFile<Product>(productJsonPath),
+  readJsonFile<Department>(departmentJsonPath),
+])
+  .then(([products, brands]) => {
+    const result = getDepartmentsWithProductCount(brands, products);
+    return result;
+  })
+  .then((result) => {
+    console.dir(result, { depth: null, colors: true });
+  });

@@ -12,10 +12,50 @@
  * - The return should be a type that allow us to define the country name as a key and the amount of products as a value.
  */
 
+import { Product, Brand } from "./1-types";
+import {
+  brandJsonPath,
+  productJsonPath,
+  readJsonFile,
+} from "./utils/read-json.util";
+
 async function getCountriesWithBrandsAndProductCount(
-  brands: unknown[],
-  products: unknown[],
-): Promise<unknown> {
-  // Implement the function logic here
-  return;
+  brands: Brand[],
+  products: Product[],
+): Promise<Record<string, number>> {
+  const brandCountriesMap = new Map();
+
+  brands.forEach((brand) => {
+    const splittedHeadquarters = brand.headquarters.split(",");
+
+    const countryName =
+      splittedHeadquarters[splittedHeadquarters.length - 1].trim();
+
+    brandCountriesMap.set(Number(brand.id), countryName);
+  });
+
+  const result = products.reduce(
+    (counter, product) => {
+      const country = brandCountriesMap.get(product.brandId);
+      if (country) {
+        counter[country] = (counter[country] || 0) + 1;
+      }
+      return counter;
+    },
+    {} as Record<string, number>,
+  );
+
+  return result;
 }
+
+Promise.all([
+  readJsonFile<Product>(productJsonPath),
+  readJsonFile<Brand>(brandJsonPath),
+])
+  .then(([products, brands]) => {
+    const result = getCountriesWithBrandsAndProductCount(brands, products);
+    return result;
+  })
+  .then((result) => {
+    console.dir(result, { depth: null, colors: true });
+  });

@@ -1,11 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "target": "esnext",
     "module": "commonjs",
     "rootDir": "./3-typescript",
+    "outDir": "./3-typescript/dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "removeComments": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "baseUrl": "./3-typescript",
+  },
+  "include": ["3-typescript/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
