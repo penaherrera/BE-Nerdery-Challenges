@@ -24,20 +24,29 @@ async function getDepartmentsWithProductCount(
   departments: Department[],
   products: Product[],
 ): Promise<DepartmentProducts[]> {
-  const departmentProducts = departments.map((department) => {
-    const productsInDepartment = products.filter(
-      (product) => department.id === product.departmentId,
-    );
+  const productCountMap = new Map<string, number>();
+  const productsByDeptMap = new Map<string, Product[]>();
 
-    const departmentProduct = {
-      name: department.name,
-      productsCount: productsInDepartment.length,
-      products: productsInDepartment,
-    };
+  products.forEach((product) => {
+    const currentCount = productCountMap.get(String(product.departmentId)) || 0;
+    productCountMap.set(String(product.departmentId), currentCount + 1);
 
-    return departmentProduct;
+    if (!productsByDeptMap.has(String(product.departmentId))) {
+      productsByDeptMap.set(String(product.departmentId), []);
+    }
+    productsByDeptMap.get(String(product.departmentId))?.push(product);
   });
-  return departmentProducts;
+
+  const result: DepartmentProducts[] = [];
+  departments.forEach((department) => {
+    result.push({
+      name: department.name,
+      productsCount: productCountMap.get(String(department.id)) || 0,
+      products: productsByDeptMap.get(String(department.id)) || [],
+    });
+  });
+
+  return result;
 }
 
 Promise.all([
