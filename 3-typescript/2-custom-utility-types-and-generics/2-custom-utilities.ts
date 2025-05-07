@@ -101,6 +101,9 @@ type MyReadonly<T> = {
   readonly [K in keyof T]: T[K];
 };
 
+// Add here your example
+//Uncomment to see error
+
 // interface User {
 //   name: string;
 //   age: number;
@@ -112,7 +115,6 @@ type MyReadonly<T> = {
 // };
 
 // user.name = "Francisco";
-// Add here your example
 
 /**
  * Exercise #4: Recreate the built-in `ReturnType<T>` utility type without using it.
@@ -158,7 +160,13 @@ type MyReturnType<T extends (...args: any) => any> = T extends (
 
 // Add here your solution
 
+//Uncomment to see infer in AwaitedResult
+type MyAwaited<T extends PromiseLike<unknown>> =
+  T extends PromiseLike<infer U> ? U : never;
 // Add here your example
+
+type StringPromise = Promise<string>;
+type AwaitedResult = MyAwaited<StringPromise>;
 
 /**
  * Exercise 6: Create a utility type `RequiredByKeys<T, K>` that makes specific keys of `T` required.
@@ -182,5 +190,22 @@ type MyReturnType<T extends (...args: any) => any> = T extends (
  */
 
 // Add here your solution
+
+type RequiredByKeys<T, K extends keyof T = keyof T> = Omit<T, K> &
+  Required<Pick<T, K>>;
+
+type PartialProduct = Partial<Product>;
+
+type ProductWithRequiredIdAndName = RequiredByKeys<
+  PartialProduct,
+  "id" | "name"
+>;
+
+//Demonstration with a constant
+//Uncomment to see error
+// const requiredId: ProductWithRequiredIdAndName = {
+//   name: "Laptop",
+//   price: 999.99
+// };
 
 // Add here your example
