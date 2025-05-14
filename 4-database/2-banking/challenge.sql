@@ -50,55 +50,62 @@ DECLARE
     to_status TEXT;
     reference TEXT := 'transfer_' || NOW();
 BEGIN
-    IF from_id = to_id THEN
-        RAISE EXCEPTION 'Cannot transfer to the same account';
-    END IF;
+    BEGIN
+        IF from_id = to_id THEN
+            RAISE EXCEPTION 'Cannot transfer to the same account';
+        END IF;
 
-    IF amount <= 0 THEN
-        RAISE EXCEPTION 'Transfer amount must be greater than zero';
-    END IF;
+        IF amount <= 0 THEN
+            RAISE EXCEPTION 'Transfer amount must be greater than zero';
+        END IF;
 
-    SELECT balance, status INTO from_balance, from_status
-    FROM banking.accounts
-    WHERE account_id = from_id;
+        SELECT balance, status INTO from_balance, from_status
+        FROM banking.accounts
+        WHERE account_id = from_id;
 
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Sender account does not exist';
-    END IF;
+        IF NOT FOUND THEN
+            RAISE EXCEPTION 'Sender account does not exist';
+        END IF;
 
-    SELECT status INTO to_status
-    FROM banking.accounts
-    WHERE account_id = to_id;
+        SELECT status INTO to_status
+        FROM banking.accounts
+        WHERE account_id = to_id;
 
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Recipient account does not exist';
-    END IF;
+        IF NOT FOUND THEN
+            RAISE EXCEPTION 'Recipient account does not exist';
+        END IF;
 
-    IF from_status = 'frozen' THEN
-        RAISE EXCEPTION 'Sender account is frozen';
-    END IF;
+        IF from_status = 'frozen' THEN
+            RAISE EXCEPTION 'Sender account is frozen';
+        END IF;
 
-    IF to_status = 'frozen' THEN
-        RAISE EXCEPTION 'Recipient account is frozen';
-    END IF;
+        IF to_status = 'frozen' THEN
+            RAISE EXCEPTION 'Recipient account is frozen';
+        END IF;
 
-    IF from_balance < amount THEN
-        RAISE EXCEPTION 'Insufficient funds in sender account';
-    END IF;
+        IF from_balance < amount THEN
+            RAISE EXCEPTION 'Insufficient funds in sender account';
+        END IF;
 
-    UPDATE banking.accounts
-    SET balance = balance - amount
-    WHERE account_id = from_id;
+        UPDATE banking.accounts
+        SET balance = balance - amount
+        WHERE account_id = from_id;
 
-    UPDATE banking.accounts
-    SET balance = balance + amount
-    WHERE account_id = to_id;
+        UPDATE banking.accounts
+        SET balance = balance + amount
+        WHERE account_id = to_id;
 
-    INSERT INTO banking.transactions(account_id, amount, transaction_type, reference, transaction_date)
-    VALUES (from_id, amount, 'withdrawal', reference, NOW());
+        INSERT INTO banking.transactions(account_id, amount, transaction_type, reference, transaction_date)
+        VALUES (from_id, amount, 'withdrawal', reference, NOW());
 
-    INSERT INTO banking.transactions(account_id, amount, transaction_type, reference, transaction_date)
-    VALUES (to_id, amount, 'deposit', reference, NOW());
+        INSERT INTO banking.transactions(account_id, amount, transaction_type, reference, transaction_date)
+        VALUES (to_id, amount, 'deposit', reference, NOW());
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            RAISE NOTICE 'Error occurred during transfer: %', SQLERRM;
+            RAISE;
+    END;
 END;
 $$ LANGUAGE plpgsql;
 
