@@ -16,8 +16,6 @@ INNER JOIN
     film_category ON category.category_id = film_category.category_id
 GROUP BY
     category.category_id, category.name
-ORDER BY
-    film_count DESC;
 
 -- your query here
 
@@ -60,17 +58,16 @@ LIMIT 5;
 
 -- your query here
 SELECT 
-    f.title,
-	r.rental_date
+    f.title
 FROM 
     film AS f
 LEFT JOIN 
     inventory AS i ON f.film_id = i.film_id
 LEFT JOIN 
     rental AS r ON i.inventory_id = r.inventory_id 
-    AND r.rental_date >= '2014-01-01'
+    AND r.rental_date >= (CURRENT_DATE - INTERVAL '10 years')
 GROUP BY 
-    f.title, r.rental_date
+    f.title
 HAVING 
     COUNT(r.rental_id) > 0
 ORDER BY 
@@ -164,7 +161,7 @@ SELECT
     last_name,
     MIN(rental_date) AS first_rental,
     MAX(rental_date) AS last_rental,
-    (MAX(rental_date) - MIN(rental_date)) AS rental_span_days
+    EXTRACT(DAY FROM (MAX(rental_date) - MIN(rental_date))) AS rental_span_days
 FROM
     customer_rentals
 GROUP BY
