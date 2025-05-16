@@ -32,5 +32,5 @@ extend type Mutation {
   removeFromCart(id: Int!): Boolean!
 
   #Clear all products from a cart
-  clearCart(cartId: Int!): Boolean! # Vaciar todo el carrito
+  clearCart(cartId: Int!): Boolean!
 }
