@@ -1,0 +1,30 @@
+type User {
+  id: Int!
+  firstName: String!
+  lastName: String!
+  address: String!
+  phoneNumber: String!
+  email: String!
+  password: String!
+  resetPasswordToken: String
+  role: Role!
+  orders: [Order!]!
+  transactions: [Transaction!]!
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+}
+
+input UpdateUserInput {
+  firstName: String
+  lastName: String
+  address: String
+  phoneNumber: String
+  email: String
+  password: String
+}
+
+extend type Mutation {
+  # Update user account
+  updateUser(id: Int!, input: UpdateUserInput): User!
+}

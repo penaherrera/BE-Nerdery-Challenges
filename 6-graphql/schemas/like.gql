@@ -1,0 +1,31 @@
+type Like {
+  id: Int!
+  user: User!
+  productId: Int!
+  product: Product!
+  createdAt: DateTime!
+}
+
+input CreateLikeInput {
+  userId: Int!
+  productId: Int!
+}
+
+extend type Query {
+  # Get all likes by a specific user
+  userLikes(userId: Int!): [Like!]!
+
+  # Get all likes for a specific product
+  productLikes(productId: Int!): [Like!]!
+
+  # Count total likes for a product
+  likeCount(productId: Int!): Int!
+}
+
+extend type Mutation {
+  # Add a like to a product
+  createLike(input: CreateLikeInput!): Like!
+
+  # Remove a like from a product
+  deleteLike(userId: Int!, productId: Int!): Boolean!
+}

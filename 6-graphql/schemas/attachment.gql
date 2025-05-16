@@ -1,0 +1,23 @@
+type Attachment {
+  id: Int!
+  directory: String!
+  key: String!
+  ext: String!
+  contentType: String!
+  createdAt: DateTime!
+}
+
+input CreateAttachmentInput {
+  directory: String!
+  key: String!
+  ext: String!
+  contentType: String!
+}
+
+extend type Mutation {
+  # Create an attachment
+  createAttachment(input: CreateAttachmentInput!): Attachment!
+
+  # Delete an attachment
+  deleteAttachment(id: Int!): Boolean!
+}

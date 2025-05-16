@@ -1,0 +1,67 @@
+enum GenderEnum {
+  MALE
+  FEMALE
+  UNISEX
+}
+
+type Product {
+  id: Int!
+  category: Category!
+  brand: Brand!
+  productType: ProductType!
+  attachments: [Attachment!]!
+  likes: [Like!]!
+  isActive: Boolean!
+  inStock: Boolean!
+  name: String!
+  description: String
+  price: Float!
+  gender: GenderEnum
+  detail: Detail!
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+}
+
+input CreateProductInput {
+  category: Category!
+  brand: Brand!
+  productType: ProductType!
+  name: String!
+  description: String
+  price: Float!
+  gender: GenderEnum
+  isActive: Boolean
+  inStock: Boolean
+}
+
+input UpdateProductInput {
+  category: Category
+  brand: Brand
+  productType: ProductType
+  name: String
+  description: String
+  price: Float
+  gender: GenderEnum
+  isActive: Boolean
+  inStock: Boolean
+}
+
+extend type Query {
+  # Get all products
+  products: [Product!]!
+
+  # Get a single product by ID
+  product(id: Int!): Product
+}
+
+extend type Mutation {
+  # Create a new product
+  createProduct(input: CreateProductInput!): Product!
+
+  # Update an existing product
+  updateProduct(id: Int!, input: UpdateProductInput!): Product!
+
+  # Soft delete a product (sets deletedAt timestamp)
+  deleteProduct(id: Int!): Boolean!
+}

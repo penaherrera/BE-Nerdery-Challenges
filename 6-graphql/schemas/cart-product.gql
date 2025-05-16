@@ -1,0 +1,36 @@
+type CartProduct {
+  id: Int!
+  cart: Cart!
+  product: Product!
+  quantity: Int!
+  createdAt: DateTime!
+}
+
+input AddProductToCartInput {
+  cartId: Int!
+  productId: Int!
+  quantity: Int!
+}
+
+input UpdateCartProductInput {
+  quantity: Int!
+}
+
+extend type Query {
+  # Get all products from a cart
+  cartProducts(cartId: Int!): [CartProduct!]!
+}
+
+extend type Mutation {
+  # Add a product to a cart
+  addToCart(input: AddProductToCartInput!): CartProduct!
+  
+  # Update quantity of a product in a cart
+  updateCartProduct(id: Int!, input: UpdateCartProductInput!): CartProduct!
+  
+  #Remove a product from a cart
+  removeFromCart(id: Int!): Boolean!
+
+  #Clear all products from a cart
+  clearCart(cartId: Int!): Boolean! # Vaciar todo el carrito
+}

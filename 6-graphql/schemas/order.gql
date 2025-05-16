@@ -1,0 +1,43 @@
+enum Currency {
+  USD
+  EUR
+}
+
+enum OrderStatus {
+  IN_PROGRESS
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+type Order {
+  id: Int!
+  cart: Cart!
+  total: Float!
+  currency: Currency!
+  status: OrderStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+input CreateOrderInput {
+  cartId: Int!
+  total: Float!
+  currency: Currency
+}
+
+input UpdateOrderInput {
+  status: OrderStatus
+}
+
+extend type Query {
+  order(id: Int!): Order
+  ordersByStatus(status: OrderStatus!): [Order!]!
+  userOrders(userId: Int!): [Order!]!
+}
+
+extend type Mutation {
+  createOrder(input: CreateOrderInput!): Order!
+  updateOrderStatus(id: Int!, status: OrderStatus!): Order!
+  cancelOrder(id: Int!): Order!
+}
