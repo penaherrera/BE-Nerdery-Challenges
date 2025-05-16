@@ -1,0 +1,21 @@
+type ProductAttachment {
+  id: Int!
+  product: Product!
+  attachment: Attachment!
+  createdAt: DateTime!
+}
+
+input AddAttachmentToProductInput {
+  productId: Int!
+  attachmentId: Int!
+}
+
+extend type Mutation {
+  # Delete an attachment product
+  addAttachmentToProduct(
+    input: AddAttachmentToProductInput!
+  ): ProductAttachment!
+
+  # Delete an attachment product
+  removeAttachmentFromProduct(id: Int!): Boolean!
+}

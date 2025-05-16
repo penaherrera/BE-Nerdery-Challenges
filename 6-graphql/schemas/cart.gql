@@ -1,0 +1,26 @@
+type Cart {
+  id: Int!
+  user: User!
+  cartProducts: [CartProduct!]!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+input CreateCartInput {
+  userId: Int!
+}
+
+extend type Query {
+  # Find a specific cart
+  cart(id: Int!): Cart
+  # Find an user cart
+  userCart(userId: Int!): Cart
+}
+
+extend type Mutation {
+  # Create a cart
+  createCart(input: CreateCartInput!): Cart!
+
+  # Delete a cart
+  deleteCart(id: Int!): Boolean!
+}

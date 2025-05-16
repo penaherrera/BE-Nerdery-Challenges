@@ -1,0 +1,32 @@
+type Transaction {
+  id: Int!
+  paymentMethod: PaymentMethod!
+  order: Order!
+  amount: Float!
+  stripePaymentIntentId: String!
+  description: String!
+  receiptUrl: String!
+  createdAt: DateTime!
+}
+
+input CreateTransactionInput {
+  paymentMethodId: Int!
+  orderId: Int!
+  amount: Float!
+  stripePaymentIntentId: String!
+  description: String!
+  receiptUrl: String!
+}
+
+extend type Query {
+  # Get a specific transaction
+  transaction(id: Int!): Transaction
+
+  # Get transactions from an order
+  orderTransactions(orderId: Int!): [Transaction!]
+}
+
+extend type Mutation {
+  # Create a transaction
+  createTransaction(input: CreateTransactionInput!): Transaction!
+}

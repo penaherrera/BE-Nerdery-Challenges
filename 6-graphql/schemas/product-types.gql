@@ -1,0 +1,34 @@
+type ProductType {
+  id: Int!
+  name: String!
+  products: [Product!]!
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input CreateProductTypeInput {
+  name: String!
+}
+
+input UpdateProductTypeInput {
+  name: String!
+}
+
+extend type Query {
+  # Get all productTypes
+  productTypes: [ProductType!]!
+
+  # Get a single productType by ID
+  productType(id: Int!): ProductType
+}
+
+extend type Mutation {
+  # Create a new productType
+  createProductType(input: CreateProductTypeInput!): ProductType!
+
+  # Update an existing productType
+  updateProductType(id: Int!, input: UpdateProductTypeInput!): ProductType!
+
+  # Delete a productType
+  deleteProductType(id: Int!): Boolean!
+}
