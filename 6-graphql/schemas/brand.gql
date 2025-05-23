@@ -20,11 +20,8 @@ input UpdateBrandInput {
 }
 
 extend type Query {
-  # Get all brands
-  brands: [Brand!]!
-
   # Get only Active Brands
-  brands(onlyActive: Boolean = true): [Brand!]!
+  brands(onlyActive: Boolean): [Brand!]!
 
   # Get a single brand by ID
   brand(id: Int!): Brand
@@ -38,5 +35,5 @@ extend type Mutation {
   updateBrand(id: Int!, input: UpdateBrandInput!): Brand!
 
   # Delete a brand
-  deleteBrand(id: Int!): Boolean!
+  deleteBrand(id: Int!): Brand
 }

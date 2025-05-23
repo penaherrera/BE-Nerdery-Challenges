@@ -17,16 +17,16 @@ type Product {
   description: String
   price: Float!
   gender: GenderEnum
-  detail: Detail!
+  detail: [Detail!]!
   createdAt: DateTime
   updatedAt: DateTime
   deletedAt: DateTime
 }
 
 input CreateProductInput {
-  category: Category!
-  brand: Brand!
-  productType: ProductType!
+  categoryId: Int!
+  brandId: Int!
+  productTypeId: Int!
   name: String!
   description: String
   price: Float!
@@ -36,9 +36,9 @@ input CreateProductInput {
 }
 
 input UpdateProductInput {
-  category: Category
-  brand: Brand
-  productType: ProductType
+  categoryId: Int
+  brandId: Int
+  productTypeId: Int
   name: String
   description: String
   price: Float
@@ -49,7 +49,7 @@ input UpdateProductInput {
 
 extend type Query {
   # Get all products
-  products: [Product!]!
+  products(limit: Int!, offset: Int): [Product!]!
 
   # Get a single product by ID
   product(id: Int!): Product

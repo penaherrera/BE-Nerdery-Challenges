@@ -19,5 +19,5 @@ extend type Mutation {
   createAttachment(input: CreateAttachmentInput!): Attachment!
 
   # Delete an attachment
-  deleteAttachment(id: Int!): Boolean!
+  deleteAttachment(id: Int!): Attachment!
 }
