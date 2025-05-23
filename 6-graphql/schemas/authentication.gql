@@ -1,0 +1,59 @@
+type AuthResponse {
+  accessToken: String!
+  refreshToken: String!
+  refreshExpiresAt: Int!
+}
+
+type RefreshTokenResponse {
+  accessToken: String!
+  refreshToken: String!
+  refreshExpiresAt: Int!
+}
+
+input SignUpInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  address: String!
+  phoneNumber: String!
+  password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input RefreshTokenInput {
+  refreshToken: String!
+}
+
+input ForgotPasswordInput {
+  email: String!
+}
+
+input ResetPasswordInput {
+  token: String!
+  newPassword: String!
+}
+
+extend type Query {
+  me: User! # User extracted from JWT
+}
+
+extend type Mutation {
+  # Create an account
+  signUp(input: SignUpInput!): Boolean!
+
+  # Login in to an account
+  login(input: LoginInput!): AuthResponse!
+
+  # Create a new JWT token
+  refreshToken(input: RefreshTokenInput!): RefreshTokenResponse!
+
+  # Forgot password flow
+  forgotPassword(input: ForgotPasswordInput!): Boolean!
+
+  # Reset password after forgot password flow
+  resetPassword(input: ResetPasswordInput!): Boolean!
+}
