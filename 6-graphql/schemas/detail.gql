@@ -1,0 +1,57 @@
+enum SizeEnum {
+  EXTRA_SMALL
+  SMALL
+  MEDIUM
+  LARGE
+  EXTRA_LARGE
+}
+
+type Detail {
+  id: Int!
+  stock: Int!
+  color: String!
+  size: SizeEnum
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
+  product: Product!
+}
+
+input CreateDetailInput {
+  stock: Int!
+  color: String!
+  size: SizeEnum
+  productId: Int!
+}
+
+input UpdateDetailInput {
+  stock: Int
+  color: String
+  size: SizeEnum
+}
+
+extend type Query {
+  # Get all details with optional filters
+  details(filter: DetailFilter): [Detail!]!
+
+  # Get a single detail by ID
+  detail(id: Int!): Detail
+
+  # Get all details for a specific product
+  detailsByProduct(productId: Int!): [Detail!]!
+}
+
+extend type Mutation {
+  # Create a new detail entry
+  createDetail(input: CreateDetailInput!): Detail!
+
+  # Update an existing detail
+  updateDetail(id: Int!, input: UpdateDetailInput!): Detail!
+
+  # Soft delete a detail
+  deleteDetail(id: Int!): Boolean!
+
+  # Adjust stock quantity (positive or negative values)
+  adjustStock(id: Int!, quantity: Int!): Detail!
+}
+scalar DateTime

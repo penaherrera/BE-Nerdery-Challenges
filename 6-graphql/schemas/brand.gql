@@ -1,0 +1,39 @@
+type Brand {
+  id: Int!
+  name: String!
+  description: String
+  isActive: Boolean!
+  products: [Product!]!
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input CreateBrandInput {
+  name: String!
+  description: String
+}
+
+input UpdateBrandInput {
+  name: String
+  description: String
+  isActive: Boolean
+}
+
+extend type Query {
+  # Get only Active Brands
+  brands(onlyActive: Boolean): [Brand!]!
+
+  # Get a single brand by ID
+  brand(id: Int!): Brand
+}
+
+extend type Mutation {
+  # Create a new brand
+  createBrand(input: CreateBrandInput!): Brand!
+
+  # Update an existing brand
+  updateBrand(id: Int!, input: UpdateBrandInput!): Brand!
+
+  # Delete a brand
+  deleteBrand(id: Int!): Brand
+}

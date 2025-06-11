@@ -1,0 +1,17 @@
+type PaymentIntent {
+  amount: Int!
+  currency: String!
+}
+
+type PaymentIntentResponse {
+  paymentIntentId: String!
+}
+
+input PaymentIntentInput {
+  amount: Int!
+  currency: String!
+}
+
+extend type Mutation {
+  createPaymentIntent(input: PaymentIntentInput!): PaymentIntentResponse!
+}

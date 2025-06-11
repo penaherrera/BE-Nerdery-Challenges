@@ -1,0 +1,30 @@
+type Like {
+  id: Int!
+  user: User!
+  product: Product!
+  createdAt: DateTime!
+}
+
+type LikeResponse {
+  liked: Boolean!
+  like: Like
+}
+
+input ToggleLikeInput {
+  userId: Int!
+  productId: Int!
+  liked: Boolean!
+}
+
+extend type Query {
+  # Get all likes by a specific user
+  userLikedProducts(userId: Int!): [Product!]!
+
+  # Get all likes for a specific product
+  productLikers(productId: Int!): [User!]!
+}
+
+extend type Mutation {
+  # Toggle like
+  toggleLike(input: ToggleLikeInput!): LikeResponse!
+}

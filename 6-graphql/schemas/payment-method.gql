@@ -1,0 +1,42 @@
+type PaymentMethod {
+  id: Int!
+  user: User!
+  stripePaymentMethodId: String! #Token from stripe
+  isDefault: Boolean! = false
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
+}
+
+input CreatePaymentMethodInput {
+  userId: Int!
+  stripePaymentMethodId: String!
+  isDefault: Boolean = false
+}
+
+input UpdatePaymentMethodInput {
+  stripePaymentMethodId: String
+  isDefault: Boolean
+}
+
+extend type Query {
+  # Get a specific payment method
+  paymentMethod(id: Int!): PaymentMethod
+
+  #Get payment methods from an user
+  userPaymentMethods(userId: Int!): [PaymentMethod!]!
+
+  #Get default payment method
+  defaultPaymentMethod(userId: Int!): PaymentMethod
+}
+
+extend type Mutation {
+  # Create a payment method
+  createPaymentMethod(input: CreatePaymentMethodInput!): PaymentMethod!
+  
+  # Update a payment method
+  updatePaymentMethod(id: Int!, input: UpdatePaymentMethodInput!): PaymentMethod!
+  
+  # Delete a payment method
+  deletePaymentMethod(id: Int!): Boolean!
+}
