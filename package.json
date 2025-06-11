@@ -15,7 +15,8 @@
     "prettier:fix": "yarn run prettier src --write",
     "test": "jest",
     "test:watch": "jest --watch",
-    "format": "yarn lint:fix & yarn prettier:fix"
+    "format": "yarn lint:fix & yarn prettier:fix",
+    "build": "tsc"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

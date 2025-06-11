@@ -21,8 +21,30 @@
  */
 
 // Add here your solution
+type OmitByType<T, U> = {
+  [K in keyof T as T[K] extends U ? never : K]: T[K];
+};
 
 // Add here your example
+
+type Product = {
+  id: number;
+  name: string;
+  isActive: boolean;
+  price: number;
+};
+
+type ProductWithouNumber = OmitByType<Product, number>;
+
+//Demonstration with a constant
+//Uncomment to see error
+
+// const product: ProductWithouNumber = {
+//   id: 1, //error here
+//   name: "Glass",
+//   isActive: true,
+//   price: 12, //error here
+// };
 
 /**
  * Exercise #2: Implement the utility type `If<C, T, F>`, which evaluates a condition `C`
@@ -40,6 +62,14 @@
  */
 
 // Add here your solution
+
+type If<C extends boolean, T, F> = C extends true ? T : F;
+
+type isNumber = If<true, number, string>;
+
+//Demonstration with a constant
+//Uncomment to see error
+// const numberTwo: isNumber = "this is a string";
 
 // Add here your example
 
@@ -67,7 +97,24 @@
 
 // Add here your solution
 
+type MyReadonly<T> = {
+  readonly [K in keyof T]: T[K];
+};
+
 // Add here your example
+//Uncomment to see error
+
+// interface User {
+//   name: string;
+//   age: number;
+// }
+
+// let user: MyReadonly<User> = {
+//   name: "Carlos",
+//   age: 24,
+// };
+
+// user.name = "Francisco";
 
 /**
  * Exercise #4: Recreate the built-in `ReturnType<T>` utility type without using it.
@@ -89,6 +136,12 @@
 
 // Add here your solution
 
+type MyReturnType<T extends (...args: any) => any> = T extends (
+  ...args: any
+) => infer R
+  ? R
+  : never;
+
 // Add here your example
 
 /**
@@ -107,7 +160,13 @@
 
 // Add here your solution
 
+//Uncomment to see infer in AwaitedResult
+type MyAwaited<T extends PromiseLike<unknown>> =
+  T extends PromiseLike<infer U> ? U : never;
 // Add here your example
+
+type StringPromise = Promise<string>;
+type AwaitedResult = MyAwaited<StringPromise>;
 
 /**
  * Exercise 6: Create a utility type `RequiredByKeys<T, K>` that makes specific keys of `T` required.
@@ -131,5 +190,22 @@
  */
 
 // Add here your solution
+
+type RequiredByKeys<T, K extends keyof T = keyof T> = Omit<T, K> &
+  Required<Pick<T, K>>;
+
+type PartialProduct = Partial<Product>;
+
+type ProductWithRequiredIdAndName = RequiredByKeys<
+  PartialProduct,
+  "id" | "name"
+>;
+
+//Demonstration with a constant
+//Uncomment to see error
+// const requiredId: ProductWithRequiredIdAndName = {
+//   name: "Laptop",
+//   price: 999.99
+// };
 
 // Add here your example
