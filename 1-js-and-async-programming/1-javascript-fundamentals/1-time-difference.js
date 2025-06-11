@@ -16,6 +16,13 @@ timeDifference(7200, 3400); // Expected output: "01:03:20"
 
 */
 
-const timeDifference = (a, b) => {};
+const timeDifference = (a, b) => {
+  const diff = Math.abs(a - b);
+  calculateHours = Math.floor(diff / 3600).toString();
+  calculateMinutes = Math.floor((diff % 3600) / 60).toString();
+  calculateSeconds = Math.floor(diff % 60).toString();
+
+  return `${calculateHours.padStart(2, "0")}:${calculateMinutes.padStart(2, "0")}:${calculateSeconds.padStart(2, "0")}`;
+};
 
 module.exports = timeDifference;
